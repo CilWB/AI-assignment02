@@ -1,5 +1,8 @@
 import math
 import queue
+# import sys
+
+# print(sys.version)
 
 class Problem:
   def __init__(self,prb):
@@ -9,7 +12,7 @@ class Problem:
     self.x,self.y,self.bx,self.by,self.gx,self.gy = -1,-1,-1,-1,-1,-1  #initial position of S,B,T
     self.directionS = [[-1,0,'n'],[0,-1,'w'],[1,0,'s'],[0,1,'e']]      #S actions                     
     self.directionB = [[-1,0,'N',-2,0],[1,0,'S',2,0],[0,-1,'W',0,-2],[0,1,'E',0,2]] #S and B actions
-    self.fn = len(self.sol) + self.euclidean(self.bx,self.by,self.gx,self.gy)  #f(n) = g(n) + h(n)
+    self.fn = 0# len(self.sol) + self.euclidean(self.bx,self.by,self.gx,self.gy)  #f(n) = g(n) + h(n)
 
     #------get S,B,T positions from map------#
     for i in range(len(self.state)):
@@ -20,6 +23,23 @@ class Problem:
           self.setGoalposition(i,j)
         elif self.state[i][j] == 'B':
           self.setBoxposition(i,j)
+
+  # compatible with py v.2.X.X
+  # def __cmp__(self,other):
+  #   return cmp(float(self.fn),float(other.fn))
+
+  def __lt__(self, other):
+    return self.fn < other.fn
+  # def __le__(self, other):
+  #   return self.fn <= other.fn
+  # def __eq__(self, other):
+  #   return self.fn == other.fn
+  # def __ne__(self, other):
+  #   return self.fn != other.fn
+  def __gt__(self, other):
+    return self.fn > other.fn
+  # def __ge__(self, other):
+  #   return self.fn >= other.fn
 
 
   def setposition(self,x,y):
@@ -67,6 +87,7 @@ class Problem:
     self.fn = len(self.sol) + self.euclidean(self.bx,self.by,self.gx,self.gy)  #f(n) = g(n) + h(n)
     return self.fn
 
+
 def Child(node,act):
   
   child = copy.deepcopy(node)
@@ -94,6 +115,14 @@ def Child(node,act):
   
 
 
+# class cmpProblem:
+#   def __init__(self,prior=0,Problem):
+#     self.prior = prior
+#     self.prob = Problem
+
+
+
+
 def Greedy(prb):
 
   fron = queue.PriorityQueue()
@@ -102,8 +131,9 @@ def Greedy(prb):
   
   if prb.goalTest(node):
     return node.sol
-  
-  fron.put((node.getFn(),node))
+  node.updateFn()
+  # fron.put((node.getFn(),node))
+  fron.put(node)
 #   check.append(node.fn)
   explored = []
   
@@ -122,9 +152,9 @@ def Greedy(prb):
     #     node = fron.pop(count)
     #     break
     #   count+=1
-    print(fron.queue[0])
-    node = fron.get()[1]
-    print(node.state)
+    # print(fron.queue[0])
+    node = fron.get()
+    
     if node.state in explored: #avoid loop
         # print('avoid loop naja')
         continue
@@ -139,44 +169,47 @@ def Greedy(prb):
     for action in prb.Action(node):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
-      if child.state not in explored :# and child.state not in fron:
+      if child.state not in explored and child.state not in fron.queue:
         if prb.goalTest(child):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
         child.updateFn()
-        fron.put((child.getFn(),child))
+        fron.put(child)
         # check.append(child.fn)
 
 
 def Astar(prb):
 
-  fron = []
+  fron = queue.PriorityQueue()
   node = copy.deepcopy(prb)
   check = []
 
   if prb.goalTest(node):
     return node.sol
-  
-  fron.append(node)
+
+  node.updateFn()
+  fron.put(node)
   check.append(node.fn)
   explored = []
 
   
   while True:
-    if fron==[]:
+    if fron.empty():
       print('fail')
       return [-1]
     
-    count = 0
-    num = min(check)
-    check.remove(num)
-    for i in fron:
-      if i.fn == num:
-        node = fron.pop(count)
-        break
-      count+=1
+    # count = 0
+    # num = min(check)
+    # check.remove(num)
+    # for i in fron:
+    #   if i.fn == num:
+    #     node = fron.pop(count)
+    #     break
+    #   count+=1
     
+    node = fron.get()
+
     if node.state in explored: #avoid loop
       continue
     
@@ -190,14 +223,14 @@ def Astar(prb):
     for action in prb.Action(node):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
-      if child.state not in explored and child.state not in fron:
+      if child.state not in explored and child not in fron.queue:
         if prb.goalTest(child):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
         child.updateFn()
-        fron.append(child)
-        check.append(child.fn)
+        fron.put(child)
+        # check.append(child.fn)
 
 
 def BFS(prb):
@@ -266,19 +299,19 @@ def DFS_limit(prb,limit):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
       
-      if child.state not in explored and child.state not in fron.queue:
+      if child.state not in explored and child not in fron.queue:
         if prb.goalTest(child):
-          # sol.append(child.sol)
-          return child.sol
+          sol.append(child.sol)
+          # return child.sol
         fron.put(child)
   
   return sol
   
   
 def IDS(prb,limit):
-#   print('start_IDS')
+  # print('start_IDS')
   for i in range(1,limit):
-    # print(i)
+    print(i)
     sol = DFS_limit(prb,i)
     if sol != []:
         return sol
@@ -550,6 +583,20 @@ maptest
 #        #
 ###  T   #
 ##########
+
+
+10x10
+##########
+#   T    #
+#######  #
+#     #  #
+#  B  #  #
+#     #  #
+#     #  #
+#        #
+#S       #
+##########
+
 
 """    
 
