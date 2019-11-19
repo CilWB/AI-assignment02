@@ -112,16 +112,6 @@ def Child(node,act):
          
   sol = act[2]
   return child,sol
-  
-
-
-# class cmpProblem:
-#   def __init__(self,prior=0,Problem):
-#     self.prior = prior
-#     self.prob = Problem
-
-
-
 
 def Greedy(prb):
 
@@ -142,17 +132,7 @@ def Greedy(prb):
     if fron.empty():
       print('fail')
       return [-1]
-    
-    # count = 0
-    
-    # num = min(check)
-    # check.remove(num)
-    # for i in fron:
-    #   if i.fn == num:
-    #     node = fron.pop(count)
-    #     break
-    #   count+=1
-    # print(fron.queue[0])
+  
     node = fron.get()
     
     if node.state in explored: #avoid loop
@@ -169,14 +149,13 @@ def Greedy(prb):
     for action in prb.Action(node):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
-      if child.state not in explored and child.state not in fron.queue:
+      if child.state not in explored and child not in fron.queue:
         if prb.goalTest(child):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
         child.updateFn()
         fron.put(child)
-        # check.append(child.fn)
 
 
 def Astar(prb):
@@ -198,15 +177,6 @@ def Astar(prb):
     if fron.empty():
       print('fail')
       return [-1]
-    
-    # count = 0
-    # num = min(check)
-    # check.remove(num)
-    # for i in fron:
-    #   if i.fn == num:
-    #     node = fron.pop(count)
-    #     break
-    #   count+=1
     
     node = fron.get()
 
@@ -230,7 +200,6 @@ def Astar(prb):
           return child.sol
         child.updateFn()
         fron.put(child)
-        # check.append(child.fn)
 
 
 def BFS(prb):
@@ -263,7 +232,7 @@ def BFS(prb):
       child.sol.append(tempsol)
 
       
-      if child.state not in explored and child.state not in fron.queue:
+      if child.state not in explored and child not in fron.queue:
         if prb.goalTest(child):
           print('Found Goal!!')
           return child.sol
@@ -384,9 +353,6 @@ cnt_sol_ids = 0
 ANS_IDS = copy.deepcopy(SOL_IDS)
 print(SOL_IDS)
 
-
-
-
 last_str = 'Greedy time = ' + time_Greedy + '\n' 
 last_str += 'Greedy path : ' + str(ANS_Greedy) 
 last_str += '\n' + 'Astar time = ' + time_Astar + '\n' 
@@ -404,14 +370,6 @@ last_str += 'IDS path : ' + str(ANS_IDS)
 #     last_str += str_ids+'\n'
 #     intForStr+=1
 print(last_str)
-# root.bind_all("<Key>", keyHandler)
-# root.mainloop()
-
-      
-
-
-
-
 
 """
 -------------------------------------------------------
