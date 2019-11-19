@@ -286,7 +286,7 @@ def DFS_limit(prb,limit):
 def IDS(prb,limit):
   # print('start_IDS')
   for i in range(1,limit):
-    # print(i)
+    print(i)
     sol = DFS_limit(prb,i)
     if sol != []:
         return sol

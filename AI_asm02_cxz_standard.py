@@ -36,8 +36,8 @@ class Problem:
   #   return self.fn == other.fn
   # def __ne__(self, other):
   #   return self.fn != other.fn
-  def __gt__(self, other):
-    return self.fn > other.fn
+  # def __gt__(self, other):
+  #   return self.fn > other.fn
   # def __ge__(self, other):
   #   return self.fn >= other.fn
 
@@ -143,7 +143,8 @@ def Greedy(prb):
     explored.append(node.state)
 
     for i in range(4):
-      if node.state[node.bx+node.directionS[i][0]][node.by+node.directionS[i][1]]=='#' and node.state[node.bx+node.directionS[(i+1)%4][0]][node.by+node.directionS[(i+1)%4][1]]=='#':   
+      if node.state[node.bx+node.directionS[i][0]][node.by+node.directionS[i][1]]=='#' and node.state[node.bx+node.directionS[(i+1)%4][0]][node.by+node.directionS[(i+1)%4][1]]=='#':  
+        break 
         continue 
 
     for action in prb.Action(node):
@@ -188,6 +189,7 @@ def Astar(prb):
 
     for i in range(4):
       if node.state[node.bx+node.directionS[i][0]][node.by+node.directionS[i][1]]=='#' and node.state[node.bx+node.directionS[(i+1)%4][0]][node.by+node.directionS[(i+1)%4][1]]=='#':   
+        break
         continue 
 
     for action in prb.Action(node):
@@ -224,7 +226,8 @@ def BFS(prb):
 
     #-----Check if Box can not move-----#
     for i in range(4):
-      if node.state[node.bx+node.directionS[i][0]][node.by+node.directionS[i][1]]=='#' and node.state[node.bx+node.directionS[(i+1)%4][0]][node.by+node.directionS[(i+1)%4][1]]=='#':       
+      if node.state[node.bx+node.directionS[i][0]][node.by+node.directionS[i][1]]=='#' and node.state[node.bx+node.directionS[(i+1)%4][0]][node.by+node.directionS[(i+1)%4][1]]=='#':    
+        break   
         continue 
     
     for action in prb.Action(node):
@@ -232,21 +235,22 @@ def BFS(prb):
       child.sol.append(tempsol)
 
       
-      if child.state not in explored and child not in fron.queue:
+      if child.state not in explored and child.state not in fron.queue:
         if prb.goalTest(child):
           print('Found Goal!!')
           return child.sol
         fron.put(child)
-      
-    
+  
   
 def DFS_limit(prb,limit):
+  
+  Dstart_time = time.time()
   sol = []
   fron = queue.LifoQueue()
   node = copy.deepcopy(prb)
   if prb.goalTest(node):
     return node.sol
-  
+    
   fron.put(node)
   explored = []
 
@@ -263,24 +267,27 @@ def DFS_limit(prb,limit):
         # print('fail can not move Box')
         break
         continue
-
+       
     for action in prb.Action(node):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
       
-      if child.state not in explored and child not in fron.queue:
+      if child.state not in explored and child.state not in fron.queue:
         if prb.goalTest(child):
-          sol.append(child.sol)
-          # return child.sol
+          # sol.append(child.sol)
+          print('this is a real IDS time '+str((time.time()-Dstart_time)))
+          return child.sol
+          
         fron.put(child)
   
   return sol
   
+    
   
 def IDS(prb,limit):
   # print('start_IDS')
   for i in range(1,limit):
-    # print(i)
+    print(i)
     sol = DFS_limit(prb,i)
     if sol != []:
         return sol
@@ -345,7 +352,7 @@ walk = SOL_BFS
 
 print("\nIDS")
 start_time = time.time()
-SOL_IDS = IDS(prb,50) #normally 50 
+SOL_IDS = IDS(prb,50)
 time_IDS =str((time.time() - start_time))
 print("--- %s seconds ---" % (time.time() - start_time))
 
@@ -496,15 +503,8 @@ maptest
 ###########
 
 
-8x8
-########
-#  S # #
-#     T#
-# B ## #
-#      #
-# #### #
-#      #
-########
+
+
 
 
 20x20
