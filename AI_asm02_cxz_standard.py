@@ -241,23 +241,23 @@ def BFS(prb):
           return child.sol
         fron.put(child)
   
-  
+
 def DFS_limit(prb,limit):
   
   Dstart_time = time.time()
   sol = []
-  fron = queue.LifoQueue()
+  fron = []
   node = copy.deepcopy(prb)
   if prb.goalTest(node):
     return node.sol
-    
-  fron.put(node)
+  
+  fron.append(node)
   explored = []
 
   while True:
-    if fron.empty():
+    if fron==[]:
       break
-    node = fron.get()
+    node = fron.pop(0)
     explored.append(node.state)
     if len(node.sol) > limit :
         continue
@@ -267,18 +267,18 @@ def DFS_limit(prb,limit):
         # print('fail can not move Box')
         break
         continue
-       
+
     for action in prb.Action(node):
       child,tempsol = Child(node,action)
       child.sol.append(tempsol)
       
-      if child.state not in explored and child.state not in fron.queue:
+      if child.state not in explored and child.state not in fron:
         if prb.goalTest(child):
           # sol.append(child.sol)
           print('this is a real IDS time '+str((time.time()-Dstart_time)))
           return child.sol
           
-        fron.put(child)
+        fron.append(child)
   
   return sol
   
@@ -451,6 +451,8 @@ maptest
 #                  #
 ####################
 
+
+###########################################
 8x8
 ########
 #T# #  #
