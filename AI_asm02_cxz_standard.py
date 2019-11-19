@@ -144,6 +144,7 @@ def Greedy(prb):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
+        child.updateFn()
         fron.put((child.getFn(),child))
         # check.append(child.fn)
 
@@ -194,6 +195,7 @@ def Astar(prb):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
+        child.updateFn()
         fron.append(child)
         check.append(child.fn)
 
