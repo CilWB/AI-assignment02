@@ -87,6 +87,10 @@ class Problem:
     self.fn = len(self.sol) + self.euclidean(self.bx,self.by,self.gx,self.gy)  #f(n) = g(n) + h(n)
     return self.fn
 
+  def updateFnGreedy(self):
+    self.fn = self.euclidean(self.bx,self.by,self.gx,self.gy)  #f(n) = g(n) + h(n)
+    return self.fn
+
 
 def Child(node,act):
   
@@ -121,7 +125,7 @@ def Greedy(prb):
   
   if prb.goalTest(node):
     return node.sol
-  node.updateFn()
+  node.updateFnGreedy()
   # fron.put((node.getFn(),node))
   fron.put(node)
 #   check.append(node.fn)
@@ -155,7 +159,7 @@ def Greedy(prb):
           #print(pd.DataFrame(child.state))
           print('Found Goal!!')
           return child.sol
-        child.updateFn()
+        child.updateFnGreedy()
         fron.put(child)
 
 
@@ -356,18 +360,22 @@ SOL_IDS = IDS(prb,50)
 time_IDS =str((time.time() - start_time))
 print("--- %s seconds ---" % (time.time() - start_time))
 
-cnt_sol_ids = 0
-ANS_IDS = copy.deepcopy(SOL_IDS)
-print(SOL_IDS)
+# process = psutil.Process(os.getpid())
+# print(process.memory_info().rss,' kB')  # in bytes 
 
-last_str = 'Greedy time = ' + time_Greedy + '\n' 
-last_str += 'Greedy path : ' + str(ANS_Greedy) 
-last_str += '\n' + 'Astar time = ' + time_Astar + '\n' 
-last_str += 'Astar path : ' + str(ANS_Astar) + '\n' 
-last_str += 'BFS time = ' + time_BFS + '\n' 
-last_str += 'BFS path : ' + str(ANS_BFS) + '\n' 
-last_str += 'IDS time = ' + time_IDS + '\n' 
-last_str += 'IDS path : ' + str(ANS_IDS)
+# cnt_sol_ids = 0
+# ANS_IDS = copy.deepcopy(SOL_IDS)
+# print(SOL_IDS)
+
+# last_str = 'Greedy time = ' + time_Greedy + '\n' 
+# last_str += 'Greedy path : ' + str(ANS_Greedy) 
+# last_str += '\n' + 'Astar time = ' + time_Astar + '\n' 
+# last_str += 'Astar path : ' + str(ANS_Astar) + '\n' 
+# last_str += 'BFS time = ' + time_BFS + '\n' 
+# last_str += 'BFS path : ' + str(ANS_BFS) + '\n' 
+# last_str += 'IDS time = ' + time_IDS + '\n' 
+# last_str += 'IDS path : ' + str(ANS_IDS)
+
 # intForStr = 1
 # if ANS_IDS is not None:
 #   for i in ANS_IDS:
@@ -376,7 +384,7 @@ last_str += 'IDS path : ' + str(ANS_IDS)
 #       str_ids += j
 #     last_str += str_ids+'\n'
 #     intForStr+=1
-print(last_str)
+# print(last_str)
 
 """
 -------------------------------------------------------
@@ -535,9 +543,9 @@ maptest
 10x10
 ##########
 #        #
-#    B   #
-# #      #
-# S      #
+#    S   #
+#        #
+# B      #
 #   #### #
 #        #
 #        #
